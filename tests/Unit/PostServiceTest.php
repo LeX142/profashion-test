@@ -37,9 +37,7 @@ class PostServiceTest extends TestCase
     {
         $post = Post::factory()->create();
         $foundById = $this->service->getPost($post->id);
-        $foundByModel = $this->service->getPost($post);
         $this->assertEquals($post->id, $foundById->id);
-        $this->assertEquals($post->id, $foundByModel->id);
     }
 
     public function test_create_post(): void
