@@ -1,9 +1,9 @@
 FROM composer:2 as composer
 
-FROM php:8.1.14-fpm-alpine
+FROM php:8.4-fpm-alpine
 
 LABEL Maintainer="Alexey Sidorov <github.com/lex142>" \
-    Description="PHP-FPM v8.1.14 with essential extensions on top of Alpine Linux for."
+    Description="PHP-FPM v8.4 with essential extensions on top of Alpine Linux for."
 
 ENV TZ=US/Eastern
 ENV DEBIAN_FRONTEND="noninteractive"
@@ -61,10 +61,10 @@ RUN set -eux \
         pcre-dev \
         pkgconf \
         zlib-dev \
-        php81-dev \
+        php84-dev \
         linux-headers \
 \
- Install xdebug
+# Install xdebug
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
     && true \
@@ -86,7 +86,7 @@ RUN set -eux \
     && true \
 \
 # Install pdo_mysql
-    && docker-php-ext-configure pdo_mysql --with-zlib-dir=/usr \
+    && docker-php-ext-configure pdo_mysql \
     && docker-php-ext-install -j$(nproc) pdo_mysql \
     && true \
 \
@@ -130,6 +130,6 @@ COPY xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 WORKDIR /app
 
-RUN composer install --no-dev && composer openapi-generate
+#RUN composer install --no-dev && composer openapi-generate
 
 EXPOSE 9000

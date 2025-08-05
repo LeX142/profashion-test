@@ -8,7 +8,9 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
-        "laravel/tinker": "^2.10.1"
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^2.10.1",
+        "zircote/swagger-php": "^5.1"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -39,7 +41,7 @@
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
         ],
-        "post-root-package-install": [
+        "post-install-cmd": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
         ],
         "post-create-project-cmd": [
@@ -54,6 +56,9 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "openapi-generate": [
+            "@php vendor/bin/openapi -o spec.yml --format yaml app/"
         ]
     },
     "extra": {

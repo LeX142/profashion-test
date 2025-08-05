@@ -1,0 +1,792 @@
+openapi: 3.1.0
+info:
+  title: 'ProFashion OpenApi'
+  description: 'ProFashion OpenApi'
+  contact:
+    name: ProFashion
+    url: 'https://profashion.ru'
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost:8988'
+    description: 'Local server'
+paths:
+  /api/comments:
+    get:
+      tags:
+        - Комментарии
+      summary: 'Получить список комментариев'
+      description: 'Возвращает полный список комментариев в системе.'
+      operationId: 0406f270b674fae17bf23b4206a3004f
+      responses:
+        '200':
+          description: 'Список комментариев'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResource'
+      security:
+        -
+          scalar: bearerAuth
+    post:
+      tags:
+        - Комментарии
+      summary: 'Создать комментарий'
+      description: 'Создаёт новый комментарий на основе переданных данных.'
+      operationId: 300619a0a4003920aafe960e45688102
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentStoreRequest'
+      responses:
+        '201':
+          description: 'Комментарий успешно создан'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResource'
+  '/api/comments/{id}':
+    get:
+      tags:
+        - Комментарии
+      summary: 'Получить комментарий по ID'
+      description: 'Возвращает данные комментария по его уникальному идентификатору.'
+      operationId: ca005bcffa22ab29b155dd7aa13b5d6e
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID комментария'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Данные комментария'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResource'
+        '404':
+          description: 'Комментарий не найден'
+    put:
+      tags:
+        - Комментарии
+      summary: 'Обновить комментарий'
+      description: 'Обновляет данные комментария по его уникальному идентификатору.'
+      operationId: 39e62963cbf897a1b2168683878e0a46
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID комментария'
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommentUpdateRequest'
+      responses:
+        '200':
+          description: 'Комментарий успешно обновлён'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommentResource'
+        '404':
+          description: 'Комментарий не найден'
+    delete:
+      tags:
+        - Комментарии
+      summary: 'Удалить комментарий'
+      description: 'Удаляет комментарий по его уникальному идентификатору.'
+      operationId: 721e5dc0c32ef81276203df965767606
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID комментария'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'Комментарий успешно удалён'
+        '404':
+          description: 'Комментарий не найден'
+  /api/posts:
+    get:
+      tags:
+        - Посты
+      summary: 'Получить список постов'
+      description: 'Возвращает полный список постов в системе.'
+      operationId: e9eaf7df702a94f4443677bd1a36cfe6
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'Номер страницы'
+          required: false
+          schema:
+            type: integer
+        -
+          name: per_page
+          in: query
+          description: 'Количество постов на странице'
+          required: false
+          schema:
+            type: integer
+        -
+          name: title
+          in: query
+          description: 'Поиск по заголовку поста'
+          required: false
+          schema:
+            type: string
+        -
+          name: body
+          in: query
+          description: 'Поиск по содержанию поста'
+          required: false
+          schema:
+            type: string
+        -
+          name: user_id
+          in: query
+          description: 'Поиск по автору поста'
+          required: false
+          schema:
+            type: integer
+        -
+          name: with_comments
+          in: query
+          description: 'Поиск постов с комментариями'
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: 'Список постов'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/PostResource' } } }, type: object }
+                  - { $ref: '#/components/schemas/laravel-pagination' }
+      security:
+        -
+          scalar: bearerAuth
+    post:
+      tags:
+        - Посты
+      summary: 'Создать пост'
+      description: 'Создаёт новый пост на основе переданных данных.'
+      operationId: 4a657e51a0066c64781851f2fd2651e2
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostStoreRequest'
+      responses:
+        '201':
+          description: 'Пост успешно создан'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResource'
+      security:
+        -
+          scalar: bearerAuth
+  '/api/posts/{id}':
+    get:
+      tags:
+        - Посты
+      summary: 'Получить пост по ID'
+      description: 'Возвращает данные поста по его уникальному идентификатору.'
+      operationId: b0f9d92879218f68a376b6edc6467c67
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID поста'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Данные поста'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResource'
+        '404':
+          description: 'Пост не найден'
+      security:
+        -
+          scalar: bearerAuth
+    put:
+      tags:
+        - Посты
+      summary: 'Обновить пост'
+      description: 'Обновляет данные поста по его уникальному идентификатору.'
+      operationId: 929614537d76a081a92170a41ed3bdb3
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID поста'
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostUpdateRequest'
+      responses:
+        '200':
+          description: 'Пост успешно обновлён'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostResource'
+        '404':
+          description: 'Пост не найден'
+      security:
+        -
+          scalar: bearerAuth
+    delete:
+      tags:
+        - Посты
+      summary: 'Удалить пост'
+      description: 'Удаляет пост по его уникальному идентификатору.'
+      operationId: fad1726bd24cd459fc1525b67985df39
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID поста'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'Пост успешно удалён'
+        '404':
+          description: 'Пост не найден'
+      security:
+        -
+          scalar: bearerAuth
+  '/api/posts/{id}/comments':
+    get:
+      tags:
+        - Комментарии
+      summary: 'Получить комментарии поста'
+      description: 'Возвращает комментарии поста по его уникальному идентификатору.'
+      operationId: 08a5f91f034983966bffdd80772fb5fd
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID поста'
+          required: true
+        -
+          name: page
+          in: query
+          description: 'Номер страницы'
+          required: false
+          schema:
+            type: integer
+        -
+          name: per_page
+          in: query
+          description: 'Количество комментариев на странице'
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Комментарии поста'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/CommentResource' } } }, type: object }
+                  - { $ref: '#/components/schemas/laravel-pagination' }
+        '404':
+          description: 'Пост не найден'
+      security:
+        -
+          scalar: bearerAuth
+  /api/users:
+    get:
+      tags:
+        - Пользователи
+      summary: 'Получить список пользователей'
+      description: 'Возвращает полный список пользователей системы.'
+      operationId: c457726701591d1183b53aa71fc13441
+      parameters:
+        -
+          name: page
+          in: query
+          description: 'Номер страницы'
+          required: false
+        -
+          name: per_page
+          in: query
+          description: 'Количество пользователей на странице'
+          required: false
+        -
+          name: name
+          in: query
+          description: 'Поиск по имени пользователя'
+          required: false
+        -
+          name: email
+          in: query
+          description: 'Поиск по email пользователя'
+          required: false
+      responses:
+        '200':
+          description: 'Список пользователей'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/UserResource' } } }, type: object }
+                  - { $ref: '#/components/schemas/laravel-pagination' }
+      security:
+        -
+          scalar: bearerAuth
+    post:
+      tags:
+        - Пользователи
+      summary: 'Создать пользователя'
+      description: 'Создаёт нового пользователя на основе переданных данных.'
+      operationId: 592819a0265360b2014512d6dbfaf0e7
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserStoreRequest'
+      responses:
+        '201':
+          description: 'Пользователь успешно создан'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+      security:
+        -
+          scalar: bearerAuth
+  '/api/users/{id}':
+    get:
+      tags:
+        - Пользователи
+      summary: 'Получить пользователя по ID'
+      description: 'Возвращает данные пользователя по его уникальному идентификатору.'
+      operationId: 36a33ff774d5cba33c039dec2c3e0287
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID пользователя'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Данные пользователя'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+        '404':
+          description: 'Пользователь не найден'
+      security:
+        -
+          scalar: bearerAuth
+    put:
+      tags:
+        - Пользователи
+      summary: 'Обновить пользователя'
+      description: 'Обновляет данные пользователя по его уникальному идентификатору.'
+      operationId: b9091397c8b25f12c6adb74be6ce3a5a
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID пользователя'
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: 'Пользователь успешно обновлён'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+        '404':
+          description: 'Пользователь не найден'
+      security:
+        -
+          scalar: bearerAuth
+    delete:
+      tags:
+        - Пользователи
+      summary: 'Удалить пользователя'
+      description: 'Удаляет пользователя по его уникальному идентификатору.'
+      operationId: fa56cffde745d3f152f95cbacd936c0b
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID пользователя'
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: 'Пользователь успешно удалён'
+        '404':
+          description: 'Пользователь не найден'
+      security:
+        -
+          scalar: bearerAuth
+  '/api/users/{id}/posts':
+    get:
+      tags:
+        - Пользователи
+      summary: 'Получить посты пользователя'
+      description: 'Возвращает список постов пользователя по его уникальному идентификатору.'
+      operationId: d7ef6e2584748dccfff7021747efdc6d
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID пользователя'
+          required: true
+          schema:
+            type: integer
+        -
+          name: page
+          in: query
+          description: 'Номер страницы с постами пользователя'
+          required: false
+          schema:
+            type: integer
+        -
+          name: per_page
+          in: query
+          description: 'Количество постов пользователя на странице'
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Список постов пользователя'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/PostResource' } } }, type: object }
+                  - { $ref: '#/components/schemas/laravel-pagination' }
+      security:
+        -
+          scalar: bearerAuth
+  '/api/users/{id}/comments':
+    get:
+      tags:
+        - Пользователи
+      summary: 'Получить комментарии пользователя'
+      description: 'Возвращает список комментариев пользователя по его уникальному идентификатору.'
+      operationId: 9c152d911c7ea5c04671cfadac2a9e7f
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'ID пользователя'
+          required: true
+          schema:
+            type: integer
+        -
+          name: page
+          in: query
+          description: 'Номер страницы с комментариями пользователя'
+          required: false
+          schema:
+            type: integer
+        -
+          name: per_page
+          in: query
+          description: 'Количество комментариев пользователя на странице'
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 'Список комментариев пользователя'
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - { properties: { data: { type: array, items: { $ref: '#/components/schemas/CommentResource' } } }, type: object }
+                  - { $ref: '#/components/schemas/laravel-pagination' }
+      security:
+        -
+          scalar: bearerAuth
+  /api/auth/login:
+    post:
+      tags:
+        - Аутентификация
+      summary: Авторизация
+      description: 'Авторизует пользователя на основе переданных данных.'
+      operationId: 224ca9cc21e92b4e3291419882455b09
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+      responses:
+        '200':
+          description: 'Пользователь успешно авторизован'
+          content:
+            application/json:
+              schema:
+                properties:
+                  token: { type: string }
+                type: object
+      security:
+        -
+          scalar: bearerAuth
+  /api/auth/register:
+    post:
+      tags:
+        - Аутентификация
+      summary: Регистрация
+      description: 'Регистрирует нового пользователя на основе переданных данных.'
+      operationId: 47d5ee6b3638073a988b692b1a5902cf
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserStoreRequest'
+      responses:
+        '201':
+          description: 'Пользователь успешно зарегистрирован'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResource'
+components:
+  schemas:
+    laravel-pagination:
+      properties:
+        links:
+          properties:
+            first:
+              type: string
+            last:
+              type: string
+            prev:
+              type: string
+            next:
+              type: string
+          type: object
+        meta:
+          properties:
+            current_page:
+              type: integer
+            from:
+              type: integer
+            last_page:
+              type: integer
+            links:
+              additionalProperties:
+                properties:
+                  url: { type: string }
+                  label: { type: string }
+                  active: { type: boolean }
+                type: object
+            path:
+              type: string
+            per_page:
+              type: integer
+            to:
+              type: integer
+            total:
+              type: string
+          type: object
+      type: object
+    CommentStoreRequest:
+      properties:
+        post_id:
+          description: 'ID поста'
+          type: integer
+        body:
+          description: 'Текст комментария'
+          type: string
+      type: object
+    CommentUpdateRequest:
+      properties:
+        body:
+          description: 'Тело комментария'
+          type: string
+      type: object
+    PostStoreRequest:
+      properties:
+        user_id:
+          description: 'ID пользователя'
+          type: integer
+        title:
+          description: 'Заголовок поста'
+          type: string
+        body:
+          description: 'Тело поста'
+          type: string
+      type: object
+    PostUpdateRequest:
+      properties:
+        title:
+          description: 'Заголовок поста'
+          type: string
+        body:
+          description: 'Тело поста'
+          type: string
+      type: object
+    UserLoginRequest:
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      type: object
+    UserStoreRequest:
+      properties:
+        name:
+          description: 'Имя пользователя'
+          type: string
+        email:
+          description: 'Email пользователя'
+          type: string
+        password:
+          description: 'Пароль пользователя'
+          type: string
+      type: object
+    UserUpdateRequest:
+      properties:
+        name:
+          description: 'Имя пользователя'
+          type: string
+        email:
+          description: 'Email пользователя'
+          type: string
+      type: object
+    CommentResource:
+      properties:
+        id:
+          type: integer
+        body:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        user_id:
+          type: integer
+        post_id:
+          type: integer
+        post:
+          oneOf:
+            -
+              $ref: '#/components/schemas/PostResource'
+            -
+              type: 'null'
+        user:
+          oneOf:
+            -
+              $ref: '#/components/schemas/UserResource'
+            -
+              type: 'null'
+      type: object
+    PostResource:
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        body:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        user_id:
+          type: integer
+        user:
+          oneOf:
+            -
+              $ref: '#/components/schemas/UserResource'
+            -
+              type: 'null'
+        comments:
+          type:
+            - array
+            - 'null'
+          items:
+            $ref: '#/components/schemas/CommentResource'
+      type: object
+    UserResource:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      type: object
+  securitySchemes:
+    bearerAuth:
+      type: http
+      bearerFormat: JWT
+      scheme: bearer
+tags:
+  -
+    name: Комментарии
+    description: Комментарии
+  -
+    name: Посты
+    description: Посты
+  -
+    name: Пользователи
+    description: Пользователи
+  -
+    name: Аутентификация
+    description: Аутентификация
